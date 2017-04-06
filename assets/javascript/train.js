@@ -16,15 +16,21 @@ $("#add-train").on("click", function(event) {
     var trainName = $("#train-name").val().trim();
     var destination = $("#destin").val().trim();
     var frequency = $("#freq").val().trim();
-    var nextArrival = "";
-    var minutesAway = "";
+    var firstTime = $("#first-time").val().trim();
+    var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+    var currentTime = moment();
+    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+    var tRemainder = diffTime % frequency;
+    var minutesAway = frequency - tRemainder;
+    var nextArrival = moment().add(minutesAway, "minutes");
+    // console.log(nextArrival);
+
 
     var newTrain = {
         name: trainName,
         destination: destination,
         frequency: frequency,
-        nextArrival: nextArrival,
-        minutesAway: minutesAway
+        firstTime: firstTime
     };
 
     database.ref().push(newTrain);
@@ -33,7 +39,7 @@ $("#add-train").on("click", function(event) {
 
     $("#train-name").val("");
     $("#destin").val("");
-    $("#firs-time").val("");
+    $("#first-time").val("");
     $("#freq").val("");
 
     return false;
@@ -47,11 +53,16 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   var trainName = childSnapshot.val().name;
   var destination = childSnapshot.val().destination;
   var frequency = childSnapshot.val().frequency;
-  var nextArrival = childSnapshot.val().nextArrival;
-  var minutesAway = childSnapshot.val().minutesAway
+  var firstTime = childSnapshot.val().firstTime;
+  var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+  var currentTime = moment();
+  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+  var tRemainder = diffTime % frequency;
+  var minutesAway = frequency - tRemainder;
+  var nextArrival = moment().add(minutesAway, "minutes");
 
 
   // Add each train's data into the table
   $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
-  frequency + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td>");
+  frequency + "</td><td>" + moment(nextArrival).format("hh:mm a") + "</td><td>" + minutesAway + "</td>");
 });

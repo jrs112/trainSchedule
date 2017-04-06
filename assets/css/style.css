@@ -1,0 +1,10 @@
+body {
+background-image: url("../images/train2.jpg");
+background-size: 100%;
+}
+
+.jumbotron {
+    background-color: red;
+    color: white;
+    text-align: center;
+}
